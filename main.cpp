@@ -12,4 +12,15 @@ struct node
     node *right;
     node *parent;
 
+}*root;
+
+class binaryTree
+{
+public:
+    void insert(int key);
+    void destroy_tree();
+    void *search(int key);
+
+private:
+
 };
