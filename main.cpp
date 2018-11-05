@@ -11,33 +11,43 @@ struct node
     node *left;
     node *right;
 
-}*root = nullptr;
+};
+
+node* root = nullptr;
 
 node* getNode(int data)
 {
     node* newNode = new node();
     newNode->key_value = data;
+    return newNode;
 }
-node* insert(node* root,int data){
+
+class tree{
+public:
+    node* insert(node* root, int data);
+    int rootData;
+    int* rootLeft;
+    int* rootRight;
+};
+
+node* tree::insert(node* root,int data){
     if(root == nullptr)
     {
-        root = getNode(data);
+        this.root = getNode(data);
 
     }
-    else if(data <= root->key_value)
+    else if(root->key_value >= data)
     {
-        root->left = insert(root->left,data);
-
+        return(insert(root->left,data));
     }
-    else if(data >= root ->key_value)
+    else
     {
-        root->right = insert(root->right,data);
+        return(tree::insert(root->right,data));
     }
-    return root;
 }
 
 node* search(node* root, int value){
-    if(root==nullptr || root->key_value)
+    if(root==nullptr)
     {
         return root;
     }
@@ -49,13 +59,11 @@ node* search(node* root, int value){
     {
         return search(root->right,value);
     }
+
 }
 
 int main(){
-    insert(root,15);
-    insert(root,10);
-    insert(root,20);
-
-    node* result = search(root,25);
+    tree* tree1= new tree();
+    *tree1->insert(root,60);
 }
 
