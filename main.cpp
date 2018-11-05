@@ -3,7 +3,10 @@
 //
 
 #include <iostream>
-
+#include <string>
+#include <algorithm>
+#include <fstream>
+#include <vector>
 
 struct node
 {
@@ -84,7 +87,36 @@ node* tree::search(node* root, int value){
     }
 }
 
+
+std::string readfile(){
+    std::ifstream file;
+    std::string line;
+    std::string newString;
+    file.open("text.txt");
+
+    while (getline (file, line)) {
+        newString.append(line);
+    }
+
+   file.close();
+
+    for(std::string::iterator i = newString.begin(); i != newString.end(); i++)
+    {
+        if(!isalpha(newString.at(i - newString.begin())))
+        {
+            if(&(newString.at(i - newString.begin())) == " ") {
+                newString.erase(i);
+                i--;
+            }
+        }
+    }
+   return newString;
+}
+
 int main(){
+    std::cout << readfile();
+
+    /*
     tree* tree1= new tree();
     *tree1->insert(tree1->rootNode,15);
     *tree1->insert(tree1->rootNode,10);
@@ -100,7 +132,7 @@ int main(){
     else {
         std::cout << result->key_value << " was found";
     }
-
+*/
 
 
 
