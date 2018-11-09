@@ -32,13 +32,15 @@ public:
     node* rootNode;
     node* insert(node* rootNode,std::string data);
     node* search(node* rootNode,std::string data);
+    node* pre_order(node* pNode);
+    void findWord();
 
 };
 
 node* tree::insert(node* leaf,std::string data){
     if(this->rootNode == nullptr)
     {
-        return(this->rootNode = getNode(data);
+        return(this->rootNode = getNode(data));
 
     }
     if((leaf->key_value <= data) == 1)
@@ -58,7 +60,7 @@ node* tree::insert(node* leaf,std::string data){
     {
         if(leaf->left == nullptr)
         {
-            return(leaf->left = getNode(data,leaf));
+            return(leaf->left = getNode(data));
 
         }
         else
@@ -91,11 +93,11 @@ node* tree::search(node* root, std::string value){
     }
 }
 
-std::string readfile(){
+std::string readfile(std::string fileOpen){
     std::ifstream file;
     std::string line;
     std::string newString;
-    file.open("text.txt");
+    file.open(fileOpen);
 
     while (getline (file, line)) {
         newString.append(line);
@@ -127,22 +129,24 @@ std::vector<std::string> stringToVector(std::string str)
     return words;
 }
 
-
-int main(){
-    std::string documentText = readfile();
-    std::vector<std::string> textVec = stringToVector(documentText);
-
-
-
-    tree* tree1= new tree();
-
-    for(int i = 0;i < textVec.size();i++)
+node* tree::pre_order(node* pNode)
+{/*
+   1. Visit the root.
+   2. Traverse the left subtree, i.e., call Preorder(left-subtree)
+   3. Traverse the right subtree, i.e., call Preorder(right-subtree) */
+    if(pNode == nullptr)
     {
-        *tree1->insert(tree1->rootNode,textVec[i]);
+        return pNode;
     }
+    std::cout << pNode->key_value << " ";
+    pre_order(pNode->left);
+    pre_order(pNode->right);
+}
 
+void tree::findWord()
+{
     std::string toFind; std::cin >> toFind; std::cout << std::endl;
-    node* result = tree1->search(tree1->rootNode,toFind);
+    node* result = this->search(rootNode,toFind);
     if(result == nullptr)
     {
         std::cout << "This value was not found";
@@ -150,5 +154,25 @@ int main(){
     else {
         std::cout << result->key_value << " was found";
     }
+}
+
+
+void insertText(tree* selectedTree,std::string fileToInsert)
+{
+    std::string documentText = readfile(fileToInsert);
+
+    std::vector<std::string> textVec = stringToVector(documentText);
+    for(int i = 0;i < textVec.size();i++)
+    {
+        *selectedTree->insert(selectedTree->rootNode,textVec[i]);
+    }
+
+}
+int main(){
+    tree* tree1= new tree();
+    insertText(tree1,"text.txt");
+    tree1->findWord();
+    tree1->pre_order(tree1->rootNode);
+
 }
 
