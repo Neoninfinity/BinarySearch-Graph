@@ -8,6 +8,9 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <cstring>
+#include <cstdio>
+#include <cctype>
 
 struct node
 {
@@ -149,10 +152,10 @@ void tree::findWord()
     node* result = this->search(rootNode,toFind);
     if(result == nullptr)
     {
-        std::cout << "This value was not found";
+        std::cout << "This value was not found" << std::endl;
     }
     else {
-        std::cout << result->key_value << " was found";
+        std::cout << result->key_value << " was found" << std::endl;
     }
 }
 
@@ -160,7 +163,7 @@ void tree::findWord()
 void insertText(tree* selectedTree,std::string fileToInsert)
 {
     std::string documentText = readfile(fileToInsert);
-
+    transform(documentText.begin(), documentText.end(), documentText.begin(), tolower); //Applies operation sequentially to make the text lowercase.
     std::vector<std::string> textVec = stringToVector(documentText);
     for(int i = 0;i < textVec.size();i++)
     {
