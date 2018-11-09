@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <fstream>
 #include <vector>
+#include <sstream>
 
 struct node
 {
@@ -102,21 +103,34 @@ std::string readfile(){
 
     for(std::string::iterator i = newString.begin(); i != newString.end(); i++)
     {
-        if(!isalpha(newString.at(i - newString.begin())))
+        if(!isalpha(newString.at(i - newString.begin())) && isspace(newString.at(i - newString.begin())) == false)
         {
-            if(&(newString.at(i - newString.begin())) == " ") {
                 newString.erase(i);
                 i--;
-            }
         }
     }
+
    return newString;
 }
 
-int main(){
-    std::cout << readfile();
+std::vector<std::string> stringToVector(std::string str)
+{
+    std::string buffer;
+    std::stringstream ss(str);
+    std::vector<std::string> words;
+    while(ss >> buffer)
+    {
+        words.push_back(buffer);
+    }
+    return words;
+}
 
-    /*
+int main(){
+    std::string documentText = readfile();
+    std::vector<std::string> textVec = stringToVector(documentText);
+
+
+
     tree* tree1= new tree();
     *tree1->insert(tree1->rootNode,15);
     *tree1->insert(tree1->rootNode,10);
