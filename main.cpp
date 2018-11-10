@@ -37,6 +37,7 @@ public:
     node* search(node* rootNode,std::string data);
     node* pre_order(node* pNode);
     void findWord();
+    node* in_order(node* iNode);
 
 };
 
@@ -132,20 +133,6 @@ std::vector<std::string> stringToVector(std::string str)
     return words;
 }
 
-node* tree::pre_order(node* pNode)
-{/*
-   1. Visit the root.
-   2. Traverse the left subtree, i.e., call Preorder(left-subtree)
-   3. Traverse the right subtree, i.e., call Preorder(right-subtree) */
-    if(pNode == nullptr)
-    {
-        return pNode;
-    }
-    std::cout << pNode->key_value << " ";
-    pre_order(pNode->left);
-    pre_order(pNode->right);
-}
-
 void tree::findWord()
 {
     std::string toFind; std::cin >> toFind; std::cout << std::endl;
@@ -171,11 +158,35 @@ void insertText(tree* selectedTree,std::string fileToInsert)
     }
 
 }
+
+node* tree::pre_order(node* pNode)
+{
+    if(pNode == nullptr)
+    {
+        return pNode;
+    }
+    std::cout << pNode->key_value << " ";
+    pre_order(pNode->left);
+    pre_order(pNode->right);
+}
+
+node* tree::in_order(node* iNode)
+{
+    if(iNode == nullptr)
+    {
+        return iNode;
+    }
+    in_order(iNode->left);
+    std::cout << iNode->key_value << " ";
+    in_order(iNode->right);
+}
+
 int main(){
     tree* tree1= new tree();
     insertText(tree1,"text.txt");
     tree1->findWord();
     tree1->pre_order(tree1->rootNode);
+    tree1->in_order(tree1->rootNode);
 
 }
 
