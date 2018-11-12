@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <string>
+#include <algorithm>
 #include <fstream>
 #include <vector>
 #include <sstream>
@@ -15,17 +17,19 @@
 struct node
 {
     std::string key_value;
+    node *parent;
     node *left;
     node *right;
 
 };
 
-node* getNode(std::string data)
+node* getNode(node* leaf = nullptr, std::string data = nullptr)
 {
-    node* newNode = new node();
+    auto newNode = new node();
     newNode->key_value = data;
     newNode->right = nullptr;
     newNode->left = nullptr;
+    newNode->parent = leaf;
     return newNode;
 }
 
@@ -33,30 +37,32 @@ class tree{
 public:
 
     node* rootNode;
-    node* insert(node* rootNode,std::string data);
+    std::vector<node*> retVec;
+    node* insert(node* rootNode,std::string data = "" ,node* parent = nullptr);
     node* search(node* rootNode,std::string data);
     node* pre_order(node* pNode);
+    node* in_order_next(node* iNode);
+    void deleteNode(std::string toDelete);
     void findWord();
-    node* in_order(node* iNode);
 
 };
 
-node* tree::insert(node* leaf,std::string data){
+node* tree::insert(node* leaf ,const std::string data,node* parent){
     if(this->rootNode == nullptr)
     {
-        return(this->rootNode = getNode(data));
+        return(this->rootNode = getNode(parent,data));
 
     }
     if((leaf->key_value <= data) == 1)
     {
         if(leaf->right == nullptr)
         {
-            return(leaf->right = getNode(data));
+            return(leaf->right = getNode(leaf,data));
 
         }
         else
         {
-            return(tree::insert(leaf->right,data));
+            return(tree::insert(leaf->right,data,leaf));
         }
 
     }
@@ -64,18 +70,18 @@ node* tree::insert(node* leaf,std::string data){
     {
         if(leaf->left == nullptr)
         {
-            return(leaf->left = getNode(data));
+            return(leaf->left = getNode(leaf,data));
 
         }
         else
         {
-            return(tree::insert(leaf->left,data));
+            return(tree::insert(leaf->left,data,leaf));
         }
 
     }
 }
 
-node* tree::search(node* root, std::string value){
+node* tree::search(node* root, const std::string value){
     if(root==nullptr)
     {
         std::cout << "Pointer is null data was not found." << value << std::endl;
@@ -97,7 +103,7 @@ node* tree::search(node* root, std::string value){
     }
 }
 
-std::string readfile(std::string fileOpen){
+std::string readfile(const std::string fileOpen){
     std::ifstream file;
     std::string line;
     std::string newString;
@@ -121,7 +127,7 @@ std::string readfile(std::string fileOpen){
    return newString;
 }
 
-std::vector<std::string> stringToVector(std::string str)
+std::vector<std::string> stringToVector(const std::string str)
 {
     std::string buffer;
     std::stringstream ss(str);
@@ -170,23 +176,73 @@ node* tree::pre_order(node* pNode)
     pre_order(pNode->right);
 }
 
-node* tree::in_order(node* iNode)
+node* tree::in_order_next(node* iNode)
 {
-    if(iNode == nullptr)
-    {
-        return iNode;
-    }
-    in_order(iNode->left);
-    std::cout << iNode->key_value << " ";
-    in_order(iNode->right);
+    node* current = iNode;
+    while (current->left != nullptr)
+        current = current->left;
+
+    return current;
 }
 
+void tree::deleteNode(std::string toDelete){
+    transform(toDelete.begin(), toDelete.end(), toDelete.begin(), tolower);
+    node* result = this->search(rootNode,toDelete);
+
+    if(result->left == nullptr && result->right == nullptr)
+    {
+        if(result->parent->key_value > result->key_value)
+        {
+            result->parent->left = nullptr;
+            free(result);
+        }
+    }
+    else if(result->left != nullptr ^ result->right != nullptr)
+    {
+        if(result->left != nullptr)
+        {
+            result->key_value = result->left->key_value;
+            result->left = nullptr;
+            free(result->left);
+        }
+        else
+        {
+            result->key_value = result->right->key_value;
+            result->right = nullptr;
+            free(result->right);
+        }
+    }
+    else
+    {
+        node* furthestValue;
+        if(toDelete > rootNode->key_value)
+        {
+            furthestValue= this->in_order_next(rootNode->left);
+        }
+        else
+        {
+            furthestValue = this->in_order_next(rootNode->right);
+        }
+        std::string temp = result->key_value;
+        result->key_value = furthestValue->key_value;
+        if(furthestValue->parent->key_value > furthestValue->key_value)
+        {
+            furthestValue->parent->left = nullptr;
+        }
+        else
+        {
+            furthestValue->parent->right = nullptr;
+        }
+    }
+}
+
+
 int main(){
-    tree* tree1= new tree();
+    auto tree1= new tree();
     insertText(tree1,"text.txt");
-    tree1->findWord();
-    tree1->pre_order(tree1->rootNode);
-    tree1->in_order(tree1->rootNode);
+    tree1->deleteNode("cat");
+
+    tree1->insert(tree1->rootNode,"hello");
 
 }
 
