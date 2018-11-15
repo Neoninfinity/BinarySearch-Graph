@@ -3,4 +3,4 @@ project(ProgrammingCourseWork)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(ProgrammingCourseWork main.cpp)
+add_executable(ProgrammingCourseWork binarySearch.h "graph .cpp")
