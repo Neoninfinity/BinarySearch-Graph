@@ -2,18 +2,26 @@
 // Created by rahul on 11/14/18.
 //
 
+
+
 #include <iostream>
 #include <vector>
-#include "binarySearch.h"
+#include "../binaryTree/binarySearch.cpp"
 
 class graph{
 public:
     std::vector<tree<int>*> graphEdges;
     std::vector<int> graphVertices;
+    std::vector<int> visited;
     void createNode(int data);
     void addConnection(int nodeOne,int nodeTwo);
     int findNodePosition(int nodeValue);
     void addConnectionFromValue(int nodeOne,int nodeTwo);
+    void deleteConnection(int nodeOne,int nodeTwo);
+    bool isPath(int nodeA, int nodeB);
+    std::string isConnected();
+    bool flag;
+
 
 };
 
@@ -26,6 +34,8 @@ void graph::createNode(int data)
 }
 
 /* Searching algorithm to convert value to node position takes value and returns position */
+
+
 int graph::findNodePosition(int nodeValue)
 {
     for(int i =0; i < graphVertices.size(); i++)
@@ -55,17 +65,73 @@ void graph::addConnectionFromValue(int a,int b)
     wTree2->insert(wTree2->rootNode,nodeOne);
 }
 
+bool graph::isPath(int nodeA, int nodeB)
+{
+    std::vector<int> adjacent;
+    tree<int>* currentTree = graphEdges[nodeA];
+    graphEdges[nodeA]->getValues(graphEdges[nodeA]->rootNode,adjacent);
+
+    currentTree->visited = true;
+    visited.emplace_back(nodeA);
+    std::cout << nodeA;
+
+    if(nodeA == nodeB)
+    {
+        flag = true;
+    }
+    else
+    {
+        flag = false;
+    }
+
+
+    for(int i = 0; i < adjacent.size(); i++)
+    {
+        if(!graphEdges[adjacent[i]]->visited)
+        {
+            isPath(adjacent[i],nodeB);
+        }
+    }
+    return flag;
+}
+
+std::string graph::isConnected(){
+    isPath(0,graphEdges.size()-1);
+    if(visited.size() != graphVertices.size())
+    {
+        return "no";
+    }
+    else
+    {
+        return "yes";
+    }
+}
 
 int main(){
     auto graph1 = new graph;
 
+    graph1->createNode(16);
     graph1->createNode(7);
+    graph1->createNode(12);
+    graph1->createNode(13);
     graph1->createNode(8);
-    graph1->createNode(10);
-    graph1->createNode(5);
+    graph1->createNode(55);
+    graph1->createNode(19);
+    graph1->createNode(29);
+    graph1->createNode(15);
+
 
     graph1->addConnection(0,1);
     graph1->addConnection(1,2);
     graph1->addConnection(2,3);
-    graph1->addConnection(3,0);
+    graph1->addConnection(3,4);
+    graph1->addConnection(4,5);
+    graph1->addConnection(2,7);
+    graph1->addConnection(7,3);
+    graph1->addConnection(3,8);
+    graph1->addConnection(3,6);
+
+    std::string test = graph1->isConnected();
+    std::cout << std::endl;
+    std::cout << test;
 }

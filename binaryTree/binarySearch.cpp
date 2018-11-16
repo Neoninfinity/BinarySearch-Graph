@@ -39,10 +39,12 @@ template <typename T>
 class tree{
 public:
     node<T>* rootNode;
+    bool visited;
     node<T>* pre_order(node<T>* pNode);
     node<T>* in_order_next(node<T>* iNode);
     node<T>* insert(node<T>* rootNode,T data,node<T>* parent = nullptr);
     node<T>* search(node<T>* rootNode,T data);
+    std::vector<int> getValues(node<T>* pNode,std::vector<int>& retVec);
     void deleteNode(T toDelete);
     void  findWord();
 
@@ -170,6 +172,23 @@ void insertText(tree<T>* selectedTree,std::string fileToInsert)
 }
 
 template<typename T>
+std::vector<int> tree<T>::getValues(node<T>* pNode,std::vector<int>& retVec)
+{
+    if(pNode->left != nullptr)
+    {
+        getValues(pNode->left,retVec);
+    }
+
+    retVec.emplace_back(pNode->key_value);
+    if(pNode->right != nullptr)
+    {
+        getValues(pNode->right,retVec);
+    }
+    return retVec;
+
+}
+
+template <typename T>
 node<T>* tree<T>::pre_order(node<T>* pNode)
 {
     if(pNode == nullptr)
