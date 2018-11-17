@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
 #include "../binaryTree/binarySearch.cpp"
 
 class graph{
@@ -13,16 +14,16 @@ public:
     std::vector<tree<int>*> graphEdges;
     std::vector<int> graphVertices;
     std::vector<int> visited;
+    std::queue<int> queue;
     void createNode(int data);
     void addConnection(int nodeOne,int nodeTwo);
     int findNodePosition(int nodeValue);
     void addConnectionFromValue(int nodeOne,int nodeTwo);
     void deleteConnection(int nodeOne,int nodeTwo);
+    bool breadthFirst(int currentNode,int toFind);
     bool isPath(int nodeA, int nodeB);
     std::string isConnected();
     bool flag;
-
-
 };
 
 void graph::createNode(int data)
@@ -107,6 +108,32 @@ std::string graph::isConnected(){
     }
 }
 
+bool graph::breadthFirst(int currentNode,int toFind)
+{
+    if(currentNode == toFind)
+    {
+        return true;
+    }
+    std::vector<int> adjacent;
+    tree<int>* currentTree = graphEdges[currentNode];
+    graphEdges[currentNode]->getValues(graphEdges[currentNode]->rootNode,adjacent);
+    currentTree->visited = true;
+    for(int i = 0; i < adjacent.size(); i++)
+    {
+        if(adjacent[i] != currentNode && !graphEdges[i+1]->visited)
+        {
+            queue.push(adjacent[i]);
+            graphEdges[i]->visited = true;
+        }
+    }
+    int newNode = queue.front();
+    queue.pop();
+    breadthFirst(newNode,toFind);
+}
+
+
+
+
 int main(){
     auto graph1 = new graph;
 
@@ -131,7 +158,8 @@ int main(){
     graph1->addConnection(3,8);
     graph1->addConnection(3,6);
 
-    std::string test = graph1->isConnected();
-    std::cout << std::endl;
-    std::cout << test;
+    //graph1->isPath(0,5);
+
+    graph1->breadthFirst(0,7);
+
 }
