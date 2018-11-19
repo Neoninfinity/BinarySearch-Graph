@@ -8,12 +8,14 @@
 #include <vector>
 #include <queue>
 #include "../binaryTree/binarySearch.cpp"
+#include "stack.h"
 
 class graph{
 public:
     std::vector<tree<int>*> graphEdges;
     std::vector<int> graphVertices;
     std::vector<int> visited;
+    std::vector<int> stack;
     std::queue<int> queue;
     void createNode(int data);
     void addConnection(int nodeOne,int nodeTwo);
@@ -21,6 +23,7 @@ public:
     void addConnectionFromValue(int nodeOne,int nodeTwo);
     void deleteConnection(int nodeOne,int nodeTwo);
     bool breadthFirst(int currentNode,int toFind);
+    bool depthFirst(int currentNode, int toFind);
     bool isPath(int nodeA, int nodeB);
     std::string isConnected();
     bool flag;
@@ -124,6 +127,7 @@ bool graph::breadthFirst(int currentNode,int toFind)
         {
             queue.push(adjacent[i]);
             graphEdges[i]->visited = true;
+
         }
     }
     int newNode = queue.front();
@@ -131,35 +135,69 @@ bool graph::breadthFirst(int currentNode,int toFind)
     breadthFirst(newNode,toFind);
 }
 
+bool graph::depthFirst(int currentNode, int toFind)
+{
+    bool flag = false;
+    if(currentNode == toFind)
+    {
+        return true;
+    }
+    std::vector<int> adjacent;
+    tree<int>* currentTree = graphEdges[currentNode];
+    graphEdges[currentNode]->getValues(graphEdges[currentNode]->rootNode,adjacent);
+    if(!graphEdges[currentNode]->visited)
+    {
+        stack.push_back(currentNode);
+    }
+    std::cout << currentNode;
+    currentTree->visited = true;
+    for(int i = 0; i < adjacent.size(); i++)
+    {
+        if(!graphEdges[i+1]->visited)
+        {
+            flag = true;
+        }
+        if(flag = false)
+        {
+            stack.pop_back();
+        }
+        if(adjacent[i] != currentNode && !graphEdges[i+1]->visited)
+        {
+            graphEdges[adjacent[i]]->visited = true;
+            stack.push_back(adjacent[i]);
+            depthFirst(adjacent[i],toFind);
+        }
+    }
+
+
+}
 
 
 
 int main(){
     auto graph1 = new graph;
 
-    graph1->createNode(16);
+    graph1->createNode(1);
+    graph1->createNode(2);
+    graph1->createNode(3);
+    graph1->createNode(4);
+    graph1->createNode(5);
+    graph1->createNode(6);
     graph1->createNode(7);
-    graph1->createNode(12);
-    graph1->createNode(13);
     graph1->createNode(8);
-    graph1->createNode(55);
-    graph1->createNode(19);
-    graph1->createNode(29);
-    graph1->createNode(15);
+    graph1->createNode(9);
 
 
     graph1->addConnection(0,1);
-    graph1->addConnection(1,2);
+    graph1->addConnection(0,2);
     graph1->addConnection(2,3);
-    graph1->addConnection(3,4);
-    graph1->addConnection(4,5);
     graph1->addConnection(2,7);
-    graph1->addConnection(7,3);
+    graph1->addConnection(7,8);
     graph1->addConnection(3,8);
-    graph1->addConnection(3,6);
+    graph1->addConnection(3,5);
+    graph1->addConnection(5,6);
+    graph1->addConnection(7,6);
+    graph1->addConnection(7,8);
 
-    //graph1->isPath(0,5);
-
-    graph1->breadthFirst(0,7);
-
+    graph1->depthFirst(0,8);
 }
