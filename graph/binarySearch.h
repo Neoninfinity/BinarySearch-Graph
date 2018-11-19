@@ -38,15 +38,16 @@ node<T>* getNode(node<T>* leaf = nullptr, T data = nullptr)
 template <typename T>
 class tree{
 public:
-    node<T>* rootNode;
     bool visited;
+    node<T>* rootNode;
+    void  findWord();
+    void deleteNode(T toDelete);
     node<T>* pre_order(node<T>* pNode);
     node<T>* in_order_next(node<T>* iNode);
     node<T>* insert(node<T>* rootNode,T data,node<T>* parent = nullptr);
     node<T>* search(node<T>* rootNode,T data);
     std::vector<int> getValues(node<T>* pNode,std::vector<int>& retVec);
-    void deleteNode(T toDelete);
-    void  findWord();
+
 
 };
 

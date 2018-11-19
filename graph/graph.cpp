@@ -69,7 +69,7 @@ void graph::addConnectionFromValue(int a,int b)
     wTree2->insert(wTree2->rootNode,nodeOne);
 }
 
-bool graph::isPath(int nodeA, int nodeB)
+bool graph::depthFirst(int nodeA, int nodeB)
 {
     std::vector<int> adjacent;
     tree<int>* currentTree = graphEdges[nodeA];
@@ -100,7 +100,7 @@ bool graph::isPath(int nodeA, int nodeB)
 }
 
 std::string graph::isConnected(){
-    isPath(0,graphEdges.size()-1);
+    depthFirst(0,graphEdges.size()-1);
     if(visited.size() != graphVertices.size())
     {
         return "no";
@@ -135,42 +135,6 @@ bool graph::breadthFirst(int currentNode,int toFind)
     breadthFirst(newNode,toFind);
 }
 
-bool graph::depthFirst(int currentNode, int toFind)
-{
-    bool flag = false;
-    if(currentNode == toFind)
-    {
-        return true;
-    }
-    std::vector<int> adjacent;
-    tree<int>* currentTree = graphEdges[currentNode];
-    graphEdges[currentNode]->getValues(graphEdges[currentNode]->rootNode,adjacent);
-    if(!graphEdges[currentNode]->visited)
-    {
-        stack.push_back(currentNode);
-    }
-    std::cout << currentNode;
-    currentTree->visited = true;
-    for(int i = 0; i < adjacent.size(); i++)
-    {
-        if(!graphEdges[i+1]->visited)
-        {
-            flag = true;
-        }
-        if(flag = false)
-        {
-            stack.pop_back();
-        }
-        if(adjacent[i] != currentNode && !graphEdges[i+1]->visited)
-        {
-            graphEdges[adjacent[i]]->visited = true;
-            stack.push_back(adjacent[i]);
-            depthFirst(adjacent[i],toFind);
-        }
-    }
-
-
-}
 
 
 
