@@ -7,8 +7,8 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include "../binaryTree/binarySearch.cpp"
 #include "stack.h"
+#include "binarySearch.h"
 
 class graph{
 public:
@@ -18,7 +18,7 @@ public:
     std::vector<int> stack;
     std::queue<int> queue;
     void createNode(int data);
-    void addConnection(int nodeOne,int nodeTwo);
+    void addConnection(int nodeOne,int nodeTwo,int weight);
     int findNodePosition(int nodeValue);
     void addConnectionFromValue(int nodeOne,int nodeTwo);
     void deleteConnection(int nodeOne,int nodeTwo);
@@ -51,12 +51,14 @@ int graph::findNodePosition(int nodeValue)
     }
 }
 
-void graph::addConnection(int nodeOne,int nodeTwo)
+void graph::addConnection(int nodeOne,int nodeTwo,int weight)
 {
     tree<int>* wTree= this->graphEdges[nodeOne];
-    wTree->insert(wTree->rootNode,nodeTwo);
+    node<int>* nLoc = wTree->insert(wTree->rootNode,nodeTwo);
+    nLoc->weight = weight;
     tree<int>* wTree2= this->graphEdges[nodeTwo];
-    wTree2->insert(wTree2->rootNode,nodeOne);
+    node<int>* nLoc2 = wTree2->insert(wTree2->rootNode,nodeOne);
+    nLoc2->weight = weight;
 }
 
 void graph::addConnectionFromValue(int a,int b)
@@ -93,7 +95,7 @@ bool graph::depthFirst(int nodeA, int nodeB)
     {
         if(!graphEdges[adjacent[i]]->visited)
         {
-            isPath(adjacent[i],nodeB);
+            depthFirst(adjacent[i],nodeB);
         }
     }
     return flag;
@@ -141,27 +143,18 @@ bool graph::breadthFirst(int currentNode,int toFind)
 int main(){
     auto graph1 = new graph;
 
-    graph1->createNode(1);
-    graph1->createNode(2);
-    graph1->createNode(3);
-    graph1->createNode(4);
-    graph1->createNode(5);
+    graph1->createNode(33);
+    graph1->createNode(14);
+    graph1->createNode(15);
     graph1->createNode(6);
-    graph1->createNode(7);
-    graph1->createNode(8);
-    graph1->createNode(9);
+    graph1->createNode(4);
 
 
-    graph1->addConnection(0,1);
-    graph1->addConnection(0,2);
-    graph1->addConnection(2,3);
-    graph1->addConnection(2,7);
-    graph1->addConnection(7,8);
-    graph1->addConnection(3,8);
-    graph1->addConnection(3,5);
-    graph1->addConnection(5,6);
-    graph1->addConnection(7,6);
-    graph1->addConnection(7,8);
+    graph1->addConnection(0,1,5);
+    graph1->addConnection(1,2,3);
+    graph1->addConnection(1,3,2);
+    graph1->addConnection(2,4,4);
+    graph1->addConnection(3,4,1);
 
-    graph1->depthFirst(0,8);
+
 }

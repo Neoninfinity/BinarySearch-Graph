@@ -18,6 +18,7 @@ template<class T>
 struct node
 {
     T key_value;
+    int weight;
     node *parent;
     node *left;
     node *right;
