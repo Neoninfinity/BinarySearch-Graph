@@ -21,25 +21,41 @@
  * Contains all functions & data structures
  * that may be needed by the graph
  */
+
 class graph{
-    //Limit function recieved from https://stackoverflow.com/questions/8690567/setting-an-int-to-infinity-in-c
+    //Limit function received from https://stackoverflow.com/questions/8690567/setting-an-int-to-infinity-in-c
     int max = std::numeric_limits<int>::max();
     std::vector<tree<int>*> graphEdges;
     std::vector<int> graphVertices;
     std::vector<int> visited;
     std::queue<int> queue;
+    bool flag = false;
 public:
 
-    void createNode(int data);
-    void addConnection(int nodeOne,int nodeTwo,int weight);
+    //Task 3
+    void createNode(int data =0);
+    void createMultipleNodes(int amount);
+    void addConnection(int nodeOne,int nodeTwo,int weight = 0);
+    void addConnectionFromValue(int a,int b,int weight = 0);
     int findNodePosition(int nodeValue);
-    int minD(std::vector<int> distance,std::vector<bool> selected);
-    void addConnectionFromValue(int nodeOne,int nodeTwo);
-    bool breadthFirst(int currentNode,int toFind);
-    void dijkstra(int source);
-    bool depthFirst(int currentNode, int toFind);
-    void print(std::vector<int> dist);
+
+    bool isPathMain(int currentNode,int toFind);
+    bool isPath(int currentNode,int toFind);
+
+    //Task 4
     std::string isConnected();
+
+    //Task 5
+    bool depthFirstMain(int currentNode, int toFind);
+    bool depthFirst(int currentNode, int toFind);
+
+    bool breadthFirstMain(int currentNode,int toFind);
+    bool breadthFirst(int currentNode, int toFind);
+
+    //Task 6
+    int minD(std::vector<int> distance,std::vector<bool> selected);
+    void dijkstra(int source);
+    void print(std::vector<int> dist);
 
 
 };
@@ -51,7 +67,7 @@ public:
  */
 void graph::createNode(int data)
 {
-    tree<int>* newTree = new tree<int>;
+    auto newTree = new tree<int>;
     this->graphEdges.emplace_back(newTree);
     this->graphVertices.emplace_back(data);
 
@@ -94,66 +110,149 @@ void graph::addConnection(int nodeOne,int nodeTwo,int weight)
  * after finding the position will do the same as adding a connection
  * this allows the user to find a node via value
  */
-void graph::addConnectionFromValue(int a,int b)
+void graph::addConnectionFromValue(int a,int b,int weight)
 {
     int nodeOne = findNodePosition(a);
     int nodeTwo = findNodePosition(b);
-    tree<int>* wTree= this->graphEdges[nodeOne];
-    wTree->insert(wTree->rootNode,nodeTwo);
-    tree<int>* wTree2= this->graphEdges[nodeTwo];
-    wTree2->insert(wTree2->rootNode,nodeOne);
+    addConnection(nodeOne,nodeTwo,weight);
+}
+/**
+ * Create @param amount nodes
+ */
+void graph::createMultipleNodes(int amount)
+{
+    for(int i = 0; i<amount; i++)
+    {
+       createNode();
+    }
+}
+
+
+/**
+ * Writes @param value to @param fileName
+ *
+ */
+int write(int value,bool flag, const std::string fileName)
+{
+    std::ofstream file;
+    file.open(fileName,std::ios::app);
+    if(flag)
+    {
+        file << value;
+    }
+    else
+    {
+        file << value << "->";
+    }
+    file.close();
+
 }
 
 /**
- * This function runs a depth first search from @param nodeA
- * @return true is node @param nodeB or @returns false
+ * clears the file @param fileName
  */
+int clearFile(const std::string fileName)
+{
+    std::ofstream file;
+    file.open(fileName);
+    file.close();
+}
 
-bool graph::depthFirst(int nodeA, int nodeB)
+/**
+ * Finds if there is a path between current & final node
+ * then writes path to a file
+ * @returns bool if path found
+ */
+bool graph::isPathMain(int currentNode,int toFind)
 {
     std::vector<int> adjacent;
-    tree<int>* currentTree = graphEdges[nodeA];
-    graphEdges[nodeA]->getValues(graphEdges[nodeA]->rootNode,adjacent);
+    tree<int>* currentTree = graphEdges[currentNode];
+    graphEdges[currentNode]->getValues(graphEdges[currentNode]->rootNode,adjacent);
 
     currentTree->visited = true;
-    visited.emplace_back(nodeA);
-    std::cout << nodeA;
+    visited.emplace_back(currentNode);
+    write(currentNode,flag,"pathFound.txt");
 
-    if(nodeA == nodeB)
+    if(std::find(adjacent.begin(), adjacent.end(), toFind) != adjacent.end())
     {
-        return true;
+        flag = true;
+        write(toFind,flag,"pathFound.txt");
     }
 
-    for(int i = 0; i < adjacent.size(); i++)
+    for(int i : adjacent)
     {
-        if(!graphEdges[adjacent[i]]->visited)
+        if(!graphEdges[adjacent[i]]->visited && !flag )
         {
-            depthFirst(adjacent[i],nodeB);
-            return false;
+            isPathMain(adjacent[i],toFind);
         }
     }
 
 }
 
 /**
- * Checks if the graph is connected, runs a depth first search from first
- * to last node. DFS puts the nodes into a visited array. If the array size
- * is = to the amount of nodes DFS visited all nodes and hence graph is connected.
- * @return yes if all nodes visited or no if it is not.
+ * Initialises isPath() with empty arrays runs then
+ * @returns bool if path found
  */
-
-std::string graph::isConnected(){
-    depthFirst(0,graphEdges.size()-1);
-    if(visited.size() != graphVertices.size())
+bool graph::isPath(int currentNode, int toFind)
+{
+    clearFile("pathFound.txt");
+    for(int i=0; i < graphEdges.size();i++)
     {
-        return "no";
+        graphEdges[i]->visited = false;
     }
-    else
-    {
-        return "yes";
-    }
+    flag = false;
+    visited.clear();
+    isPathMain(currentNode,toFind);
+    return !flag;
 }
 
+
+/**
+ * This function runs a depth first search from @param nodeA
+ * @return true is node @param nodeB or @returns false
+ */
+
+bool graph::depthFirstMain(int currentNode, int toFind)
+{
+    std::vector<int> adjacent;
+    tree<int>* currentTree = graphEdges[currentNode];
+    graphEdges[currentNode]->getValues(graphEdges[currentNode]->rootNode,adjacent);
+
+    currentTree->visited = true;
+    visited.emplace_back(currentNode);
+    if(currentNode == toFind)
+    {
+        flag = true;
+        write(currentNode,flag,"depthFirstOut.txt");
+        return true;
+    }
+    write(currentNode,flag,"depthFirstOut.txt");
+    for(int i : adjacent)
+    {
+        if(!graphEdges[adjacent[i]]->visited)
+        {
+            depthFirstMain(adjacent[i],toFind);
+        }
+    }
+
+}
+
+/**
+ * Initialises depthFirst() with empty arrays runs then
+ * @returns bool if path found
+ */
+bool graph::depthFirst(int currentNode, int toFind)
+{
+    clearFile("depthFirstOut.txt");
+    for(int i=0; i < graphEdges.size();i++)
+    {
+        graphEdges[i]->visited = false;
+    }
+    flag = false;
+    visited.clear();
+    depthFirstMain(currentNode,toFind);
+    return !flag;
+}
 
 /**
  * Takes two parameters and a breadth first search to the second node.
@@ -161,16 +260,19 @@ std::string graph::isConnected(){
  * @param toFind This is the node to find
  * @return The return value is a simple bool expression to the node found
  */
-bool graph::breadthFirst(int currentNode,int toFind)
+bool graph::breadthFirstMain(int currentNode,int toFind)
 {
     if(currentNode == toFind)
     {
+        flag = true;
+        write(currentNode,flag,"breadthFirstOut.txt");
         return true;
     }
     std::vector<int> adjacent;
     tree<int>* currentTree = graphEdges[currentNode];
     graphEdges[currentNode]->getValues(graphEdges[currentNode]->rootNode,adjacent);
     currentTree->visited = true;
+    write(currentNode,flag,"breadthFirstOut.txt");
     for(int i = 0; i < adjacent.size(); i++)
     {
         if(adjacent[i] != currentNode && !graphEdges[i+1]->visited)
@@ -182,7 +284,43 @@ bool graph::breadthFirst(int currentNode,int toFind)
     }
     int newNode = queue.front();
     queue.pop();
-    breadthFirst(newNode,toFind);
+    breadthFirstMain(newNode,toFind);
+}
+
+/**
+ * Initialises breadthFirst() with empty arrays runs then
+ * @returns bool if path found
+ */
+bool graph::breadthFirst(int currentNode, int toFind)
+{
+    clearFile("breadthFirstOut.txt");
+    for(int i=0; i < graphEdges.size();i++)
+    {
+        graphEdges[i]->visited = false;
+    }
+    flag = false;
+    visited.clear();
+    breadthFirstMain(currentNode,toFind);
+    return !flag;
+}
+
+/**
+ * Checks if the graph is connected, runs a depth first search from first
+ * to last node. DFS puts the nodes into a visited array. If the array size
+ * is = to the amount of nodes DFS visited all nodes and hence graph is connected.
+ * @return yes if all nodes visited or no if it is not.
+ */
+
+std::string graph::isConnected(){
+    depthFirst(0,graphEdges.size()+1);
+    if(visited.size() != graphVertices.size())
+    {
+        return "no";
+    }
+    else
+    {
+        return "yes";
+    }
 }
 
 /**
@@ -195,7 +333,7 @@ bool graph::breadthFirst(int currentNode,int toFind)
 
 int graph::minD(std::vector<int> distance,std::vector<bool> selected)
 {
-    int min_ret;
+    int min_ret = 0;
     for(int x = 0; x < graphVertices.size();x++)
     {
         if(!selected[x] && distance[x] < max)
@@ -239,9 +377,9 @@ void graph::dijkstra(int source)
 
         std::vector<node<int>*> adjacent;
         tree<int>* currentTree = graphEdges[minV];
-        graphEdges[minV]->getNodes(graphEdges[minV]->rootNode,adjacent);
+        graphEdges[minV]->getNodes(currentTree->rootNode,adjacent);
 
-        for(int v = 0; v < adjacent.size(); v++)
+        for(int v =0;v < adjacent.size();v++)
         {
             //from root to adjacent
             int newDistance = dist[minV] + adjacent[v]->weight;
@@ -256,27 +394,21 @@ void graph::dijkstra(int source)
 
 }
 
-
-
-
-
 int main(){
     auto graph1 = new graph;
 
-    graph1->createNode(33);
-    graph1->createNode(14);
-    graph1->createNode(15);
-    graph1->createNode(6);
-    graph1->createNode(4);
+    graph1->createMultipleNodes(7);
 
-
-    graph1->addConnection(0,3,8);
-    graph1->addConnection(0,2,15);
-    graph1->addConnection(3,2,8);
+    graph1->addConnection(3,0,8);
+    graph1->addConnection(2,0,15);
+    graph1->addConnection(2,3,8);
     graph1->addConnection(3,1,9);
     graph1->addConnection(1,4,12);
+    graph1->addConnection(4,2,8);
+    graph1->addConnection(5,0,8);
+    graph1->addConnection(6,3,8);
 
+    graph1->isConnected();
 
-    graph1->dijkstra(0);
 
 }
