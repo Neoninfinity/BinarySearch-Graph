@@ -1,6 +1,12 @@
-//
-// Created by rahul on 11/3/18.
-//
+/**
+    210CT Coursework 1
+    binarySearch.cpp
+    Purpose: Create a binary tree and fulfil
+    tasks stated on assignment brief
+
+    @author Rahul Prashar
+    @version 1.0 21/11/18
+*/
 
 #include <iostream>
 #include <string>
@@ -14,6 +20,10 @@
 #include <cstdio>
 #include <cctype>
 
+
+/**
+ * defines a binary tree node of type @tparam T
+ */
 template<class T>
 struct node
 {
@@ -25,6 +35,14 @@ struct node
 
 };
 
+/**
+ * this function is called when the values of the node
+ * need to be set.
+ * @tparam T takes a node of type T
+ * @param leaf this will be the parent of the new node
+ * @param data this is the data to be stored
+ * @returns the new node created
+ */
 template<typename  T>
 node<T>* getNode(node<T>* leaf = nullptr, T data = nullptr)
 {
@@ -38,6 +56,12 @@ node<T>* getNode(node<T>* leaf = nullptr, T data = nullptr)
 }
 
 template <typename T>
+
+/**
+ * Class to create a tree of type @tparam T
+ * Contains all functions and parameters needed.
+ */
+
 class tree{
 public:
     bool visited;
@@ -55,6 +79,13 @@ public:
 
 };
 
+/**
+ * Inserts a new node of value @param data of type @tparam T
+ * @param leaf is the currently working node within an iteration
+ * @param data is the data to be added into the tree
+ * @param parent is the node of the previous iteration
+ * @returns the position of the new node.
+ */
 template<typename T>
 node<T>* tree<T>::insert(node<T>* leaf ,T data,node<T>* parent){
     if(this->rootNode == nullptr)
@@ -90,6 +121,13 @@ node<T>* tree<T>::insert(node<T>* leaf ,T data,node<T>* parent){
     }
 }
 
+/**
+ * Searches through the existing binary tree of type @tparam T
+ * to find @param value
+ * @param root this is the initial search root node (top of the tree)
+ * @return the position of the node OR a nullptr if its not found.
+ */
+
 template<typename T>
 node<T>* tree<T>::search(node<T>* root, T value){
     if(root==nullptr)
@@ -112,6 +150,13 @@ node<T>* tree<T>::search(node<T>* root, T value){
         return root;
     }
 }
+
+/**
+ * Opens a text file and removes unnecessary punctuation
+ * then returns a string of the new string.
+ * @param fileOpen is the file to be opened
+ * @returns the new string extracted from the file
+ */
 template<typename T>
 std::string readfile(const T fileOpen){
     std::ifstream file;
@@ -137,6 +182,11 @@ std::string readfile(const T fileOpen){
    return newString;
 }
 
+/**
+ * Takes a string then splits it into a vector
+ * @param str the string to split.
+ * @returns the split vector.
+ */
 std::vector<std::string> stringToVector(const std::string str)
 {
     std::string buffer;
@@ -149,6 +199,12 @@ std::vector<std::string> stringToVector(const std::string str)
     return words;
 }
 
+
+
+/**
+ * When called requires user input then searches for that value.
+ * Then returns a statement wether found or not.
+ */
 template <typename T>
 void tree<T>::findWord()
 {
@@ -163,6 +219,13 @@ void tree<T>::findWord()
     }
 }
 
+
+/**
+ * Takes a file and tree makes all the words lowercase
+ * then inserts into the tree iteratively.
+ * @param selectedTree this is the tree to insert into
+ * @param fileToInsert this is the file to insert
+ */
 template <typename T>
 void insertText(tree<T>* selectedTree,std::string fileToInsert)
 {
@@ -176,6 +239,14 @@ void insertText(tree<T>* selectedTree,std::string fileToInsert)
 
 }
 
+
+
+/**
+ * Used in the graph to get all values as an vector of integers
+ * @param pNode current node that the function is on
+ * @param retVec the vector to insert into
+ * @returns the new vector
+ */
 template<typename T>
 std::vector<int> tree<T>::getValues(node<T>* pNode,std::vector<int>& retVec)
 {
@@ -193,8 +264,13 @@ std::vector<int> tree<T>::getValues(node<T>* pNode,std::vector<int>& retVec)
 
 }
 
+/**
+ * Used in the graph to get all nodes as an vector of nodes
+ * @param pNode current node that the function is on
+ * @param retVec the vector to insert into
+ * @returns the new vector
+ */
 template<typename T>
-
 std::vector<node<T>*> tree<T>::getNodes(node<T>* pNode,std::vector<node<T>*>& retVec)
 {
     if(pNode->left != nullptr)
@@ -211,6 +287,11 @@ std::vector<node<T>*> tree<T>::getNodes(node<T>* pNode,std::vector<node<T>*>& re
 
 }
 
+/**
+ * prints the values in a tree in pre-order
+ * @param pNode this is the root node where pre-order will start from
+ * @returns last node parameter
+ */
 template <typename T>
 node<T>* tree<T>::pre_order(node<T>* pNode)
 {
@@ -223,7 +304,11 @@ node<T>* tree<T>::pre_order(node<T>* pNode)
     pre_order(pNode->right);
 }
 
-
+/**
+ * gets the next in_order value for two children deletion
+ * @param iNode is the next node in_order
+ * @returns the next node in in_order list
+ */
 template <typename T>
 node<T>* tree<T>::in_order_next(node<T>* iNode)
 {
@@ -234,6 +319,11 @@ node<T>* tree<T>::in_order_next(node<T>* iNode)
     return current;
 }
 
+
+/**
+ * Deletes a node within the binary Tree and frees memory
+ * @param toDelete this is the value to delete
+ */
 template <typename T>
 void tree<T>::deleteNode(T toDelete){
     transform(toDelete.begin(), toDelete.end(), toDelete.begin(), tolower);
