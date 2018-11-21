@@ -29,6 +29,7 @@ template<typename  T>
 node<T>* getNode(node<T>* leaf = nullptr, T data = nullptr)
 {
     auto newNode = new node<T>();
+    newNode->weight;
     newNode->key_value = data;
     newNode->right = nullptr;
     newNode->left = nullptr;
@@ -40,7 +41,7 @@ template <typename T>
 class tree{
 public:
     bool visited;
-    node<T>* rootNode;
+    node<T>* rootNode = nullptr;
     void  findWord();
     void deleteNode(T toDelete);
     node<T>* pre_order(node<T>* pNode);
@@ -48,6 +49,8 @@ public:
     node<T>* insert(node<T>* rootNode,T data,node<T>* parent = nullptr);
     node<T>* search(node<T>* rootNode,T data);
     std::vector<int> getValues(node<T>* pNode,std::vector<int>& retVec);
+    std::vector<node<T>*> getNodes(node<T>* pNode,std::vector<node<T>*>& retVec);
+
 
 
 };
@@ -185,6 +188,24 @@ std::vector<int> tree<T>::getValues(node<T>* pNode,std::vector<int>& retVec)
     if(pNode->right != nullptr)
     {
         getValues(pNode->right,retVec);
+    }
+    return retVec;
+
+}
+
+template<typename T>
+
+std::vector<node<T>*> tree<T>::getNodes(node<T>* pNode,std::vector<node<T>*>& retVec)
+{
+    if(pNode->left != nullptr)
+    {
+        getNodes(pNode->left,retVec);
+    }
+
+    retVec.emplace_back(pNode);
+    if(pNode->right != nullptr)
+    {
+        getNodes(pNode->right,retVec);
     }
     return retVec;
 
