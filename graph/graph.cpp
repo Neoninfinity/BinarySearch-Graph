@@ -1,7 +1,12 @@
-//
-// Created by rahul on 11/14/18.
-//
+/**
+    210CT Coursework 1
+    graph.cpp
+    Purpose: Create a graph and fulfil
+    tasks stated on assignment brief
 
+    @author Rahul Prashar
+    @version 1.0 21/11/18
+*/
 
 
 #include <iostream>
@@ -11,13 +16,11 @@
 #include "binarySearch.h"
 #include <limits>
 
-
-
-struct dNode{
-    int distance;
-    dNode* previousNode = nullptr;
-};
-
+/**
+ * graph structure allows multiple instances
+ * Contains all functions & data structures
+ * that may be needed by the graph
+ */
 class graph{
     //Limit function recieved from https://stackoverflow.com/questions/8690567/setting-an-int-to-infinity-in-c
     int max = std::numeric_limits<int>::max();
@@ -35,7 +38,7 @@ public:
     bool breadthFirst(int currentNode,int toFind);
     void dijkstra(int source);
     bool depthFirst(int currentNode, int toFind);
-    int print(std::vector<int> dist);
+    void print(std::vector<int> dist);
     std::string isConnected();
 
 
@@ -152,7 +155,12 @@ std::string graph::isConnected(){
 }
 
 
-
+/**
+ * Takes two parameters and a breadth first search to the second node.
+ * @param currentNode This is the initial node and the node which is current within an iteration
+ * @param toFind This is the node to find
+ * @return The return value is a simple bool expression to the node found
+ */
 bool graph::breadthFirst(int currentNode,int toFind)
 {
     if(currentNode == toFind)
@@ -177,6 +185,14 @@ bool graph::breadthFirst(int currentNode,int toFind)
     breadthFirst(newNode,toFind);
 }
 
+/**
+ * @param distance This is a vector of type int which stores
+ * the distance from initial node to the node.
+ * @param selected this is an equivelent to a 'visited' array
+ * and stores all nodes that have been visited
+ * @returns the minimum data value in @param distance
+ */
+
 int graph::minD(std::vector<int> distance,std::vector<bool> selected)
 {
     int min_ret;
@@ -190,13 +206,20 @@ int graph::minD(std::vector<int> distance,std::vector<bool> selected)
     return  min_ret;
 }
 
-int graph::print(std::vector<int> dist)
+/**
+ * Prints out the distances from @param dist vector
+ */
+void graph::print(std::vector<int> dist)
 {
     for (int i = 0; i < graphVertices.size(); i++)
         std::cout<< i << " -> " << dist[i] << std::endl;
 }
 
 
+/**
+ * Takes an initial node @param source, then finds the smallest path to all
+ * other nodes
+ */
 
 void graph::dijkstra(int source)
 {
@@ -230,7 +253,6 @@ void graph::dijkstra(int source)
     }
 
     print(dist);
-
 
 }
 
