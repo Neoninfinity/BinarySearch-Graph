@@ -8,8 +8,9 @@
 #include <vector>
 #include <queue>
 #include <set>
-#include "stack.h"
 #include "binarySearch.h"
+#include <limits>
+
 
 
 struct dNode{
@@ -18,28 +19,33 @@ struct dNode{
 };
 
 class graph{
-public:
+    //Limit function recieved from https://stackoverflow.com/questions/8690567/setting-an-int-to-infinity-in-c
+    int max = std::numeric_limits<int>::max();
     std::vector<tree<int>*> graphEdges;
     std::vector<int> graphVertices;
     std::vector<int> visited;
-    std::vector<int> stack;
     std::queue<int> queue;
+public:
+
     void createNode(int data);
     void addConnection(int nodeOne,int nodeTwo,int weight);
     int findNodePosition(int nodeValue);
     int minD(std::vector<int> distance,std::vector<bool> selected);
     void addConnectionFromValue(int nodeOne,int nodeTwo);
-    void deleteConnection(int nodeOne,int nodeTwo);
     bool breadthFirst(int currentNode,int toFind);
     void dijkstra(int source);
-    void dijkstra2(int current,dNode* sets[]);
     bool depthFirst(int currentNode, int toFind);
-    bool isPath(int nodeA, int nodeB);
+    int print(std::vector<int> dist);
     std::string isConnected();
-    int printSolution(std::vector<int> dist);
-    bool flag;
+
+
 };
 
+/**
+ *This function takes @param data and creates a node
+ *holding this specific data value.
+ * It assigns a tree to the node.
+ */
 void graph::createNode(int data)
 {
     tree<int>* newTree = new tree<int>;
@@ -48,9 +54,10 @@ void graph::createNode(int data)
 
 }
 
-/* Searching algorithm to convert value to node position takes value and returns position */
-
-
+/**
+ * This function goes through the nodeValue vector to find the position of
+ * @param nodeValue, then @return the value of the position
+ */
 int graph::findNodePosition(int nodeValue)
 {
     for(int i =0; i < graphVertices.size(); i++)
@@ -61,6 +68,13 @@ int graph::findNodePosition(int nodeValue)
         }
     }
 }
+/**
+ * This function will take in two nodes and the weight it will then add
+ * @param nodeOne to be adjacent to @param nodeTwo and vise versa by
+ * inserting into a binary tree.
+ * @param weight will be added to each node to state the weight between
+ * the two nodes.
+ */
 
 void graph::addConnection(int nodeOne,int nodeTwo,int weight)
 {
@@ -72,6 +86,11 @@ void graph::addConnection(int nodeOne,int nodeTwo,int weight)
     nLoc2->weight = weight;
 }
 
+/**
+ * This function will take in two values @param a & @param b
+ * after finding the position will do the same as adding a connection
+ * this allows the user to find a node via value
+ */
 void graph::addConnectionFromValue(int a,int b)
 {
     int nodeOne = findNodePosition(a);
@@ -81,6 +100,11 @@ void graph::addConnectionFromValue(int a,int b)
     tree<int>* wTree2= this->graphEdges[nodeTwo];
     wTree2->insert(wTree2->rootNode,nodeOne);
 }
+
+/**
+ * This function runs a depth first search from @param nodeA
+ * @return true is node @param nodeB or @returns false
+ */
 
 bool graph::depthFirst(int nodeA, int nodeB)
 {
@@ -108,6 +132,13 @@ bool graph::depthFirst(int nodeA, int nodeB)
 
 }
 
+/**
+ * Checks if the graph is connected, runs a depth first search from first
+ * to last node. DFS puts the nodes into a visited array. If the array size
+ * is = to the amount of nodes DFS visited all nodes and hence graph is connected.
+ * @return yes if all nodes visited or no if it is not.
+ */
+
 std::string graph::isConnected(){
     depthFirst(0,graphEdges.size()-1);
     if(visited.size() != graphVertices.size())
@@ -119,6 +150,8 @@ std::string graph::isConnected(){
         return "yes";
     }
 }
+
+
 
 bool graph::breadthFirst(int currentNode,int toFind)
 {
@@ -146,22 +179,21 @@ bool graph::breadthFirst(int currentNode,int toFind)
 
 int graph::minD(std::vector<int> distance,std::vector<bool> selected)
 {
-    int minimum = 9999;
+    int min_ret;
     for(int x = 0; x < graphVertices.size();x++)
     {
-        if(!selected[x] && distance[x] <=minimum)
+        if(!selected[x] && distance[x] < max)
         {
-            minimum = x;
+            min_ret = x;
         }
     }
-    return  minimum;
+    return  min_ret;
 }
 
-int graph::printSolution(std::vector<int> dist)
+int graph::print(std::vector<int> dist)
 {
-    printf("Vertex   Distance from Source\n");
     for (int i = 0; i < graphVertices.size(); i++)
-        printf("%d tt %d\n", i, dist[i]);
+        std::cout<< i << " -> " << dist[i] << std::endl;
 }
 
 
@@ -169,7 +201,7 @@ int graph::printSolution(std::vector<int> dist)
 void graph::dijkstra(int source)
 {
     int size = graphVertices.size();
-    std::vector<int> dist(size,9999);
+    std::vector<int> dist(size,max);
     std::vector<bool> process;
     dist[source] = 0;
     for(int i = 0; i < graphVertices.size(); i++ )
@@ -197,7 +229,7 @@ void graph::dijkstra(int source)
         }
     }
 
-    printSolution(dist);
+    print(dist);
 
 
 }
@@ -223,6 +255,6 @@ int main(){
     graph1->addConnection(1,4,12);
 
 
-    graph1->depthFirst(0,1);
+    graph1->dijkstra(0);
 
 }
