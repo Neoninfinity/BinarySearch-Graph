@@ -13,7 +13,6 @@
 #include <vector>
 #include <queue>
 #include <set>
-#include "binarySearch.h"
 #include <limits>
 
 /**
@@ -38,6 +37,7 @@ public:
     void addConnection(int nodeOne,int nodeTwo,int weight = 0);
     void addConnectionFromValue(int a,int b,int weight = 0);
     int findNodePosition(int nodeValue);
+    int getTotalNodes();
 
     bool isPathMain(int currentNode,int toFind);
     bool isPath(int currentNode,int toFind);
@@ -54,17 +54,23 @@ public:
 
     //Task 6
     int minD(std::vector<int> distance,std::vector<bool> selected);
-    void dijkstra(int source);
+    std::vector<int> dijkstra(int source);
     void print(std::vector<int> dist);
 
 
 };
+
+int graph::getTotalNodes()
+{
+    return graphVertices.size();
+}
 
 /**
  *This function takes @param data and creates a node
  *holding this specific data value.
  * It assigns a tree to the node.
  */
+
 void graph::createNode(int data)
 {
     auto newTree = new tree<int>;
@@ -179,7 +185,7 @@ bool graph::isPathMain(int currentNode,int toFind)
         write(toFind,flag,"pathFound.txt");
     }
 
-    for(int i : adjacent)
+    for(int i = 0;i < adjacent.size();i++)
     {
         if(!graphEdges[adjacent[i]]->visited && !flag )
         {
@@ -203,7 +209,7 @@ bool graph::isPath(int currentNode, int toFind)
     flag = false;
     visited.clear();
     isPathMain(currentNode,toFind);
-    return !flag;
+    return flag;
 }
 
 
@@ -226,8 +232,12 @@ bool graph::depthFirstMain(int currentNode, int toFind)
         write(currentNode,flag,"depthFirstOut.txt");
         return true;
     }
+    if(flag == true)
+    {
+        return true;
+    }
     write(currentNode,flag,"depthFirstOut.txt");
-    for(int i : adjacent)
+    for(int i =0; i < adjacent.size(); i++)
     {
         if(!graphEdges[adjacent[i]]->visited)
         {
@@ -262,29 +272,41 @@ bool graph::depthFirst(int currentNode, int toFind)
  */
 bool graph::breadthFirstMain(int currentNode,int toFind)
 {
-    if(currentNode == toFind)
+
+    graphEdges[currentNode]->visited = true;
+    queue.push(currentNode);
+
+    while(queue.empty() != true)
     {
-        flag = true;
-        write(currentNode,flag,"breadthFirstOut.txt");
-        return true;
-    }
-    std::vector<int> adjacent;
-    tree<int>* currentTree = graphEdges[currentNode];
-    graphEdges[currentNode]->getValues(graphEdges[currentNode]->rootNode,adjacent);
-    currentTree->visited = true;
-    write(currentNode,flag,"breadthFirstOut.txt");
-    for(int i = 0; i < adjacent.size(); i++)
-    {
-        if(adjacent[i] != currentNode && !graphEdges[i+1]->visited)
+        int current = queue.front();
+        queue.pop();
+        std::vector<int> adjacent;
+        graphEdges[current]->getValues(graphEdges[current]->rootNode,adjacent);
+
+        if(current == toFind)
         {
-            queue.push(adjacent[i]);
-            graphEdges[i]->visited = true;
+            flag = true;
+            write(current,flag,"breadthFirstOut.txt");
+            return true;
+        }
+        if(flag)
+        {
+            return true;
+        }
+
+        write(current,flag,"breadthFirstOut.txt");
+        for(int i = 0; i < adjacent.size();i++)
+        {
+            if(!graphEdges[adjacent[i]]->visited)
+            {
+                graphEdges[adjacent[i]]->visited = true;
+                queue.push(adjacent[i]);
+            }
 
         }
+
     }
-    int newNode = queue.front();
-    queue.pop();
-    breadthFirstMain(newNode,toFind);
+    return false;
 }
 
 /**
@@ -359,7 +381,7 @@ void graph::print(std::vector<int> dist)
  * other nodes
  */
 
-void graph::dijkstra(int source)
+std::vector<int> graph::dijkstra(int source)
 {
     int size = graphVertices.size();
     std::vector<int> dist(size,max);
@@ -391,24 +413,6 @@ void graph::dijkstra(int source)
     }
 
     print(dist);
-
-}
-
-int main(){
-    auto graph1 = new graph;
-
-    graph1->createMultipleNodes(7);
-
-    graph1->addConnection(3,0,8);
-    graph1->addConnection(2,0,15);
-    graph1->addConnection(2,3,8);
-    graph1->addConnection(3,1,9);
-    graph1->addConnection(1,4,12);
-    graph1->addConnection(4,2,8);
-    graph1->addConnection(5,0,8);
-    graph1->addConnection(6,3,8);
-
-    graph1->isConnected();
-
+    return dist;
 
 }

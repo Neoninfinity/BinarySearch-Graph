@@ -66,9 +66,10 @@ class tree{
 public:
     bool visited;
     node<T>* rootNode = nullptr;
-    void  findWord();
+    bool findWord(int toFind);
+    bool findWord(std::string toFind);
     void deleteNode(T toDelete);
-    node<T>* pre_order(node<T>* pNode);
+    std::string pre_order(node<T>* pNode);
     node<T>* in_order_next(node<T>* iNode);
     node<T>* insert(node<T>* rootNode,T data,node<T>* parent = nullptr);
     node<T>* search(node<T>* rootNode,T data);
@@ -92,6 +93,10 @@ node<T>* tree<T>::insert(node<T>* leaf ,T data,node<T>* parent){
     {
         return(this->rootNode = getNode(parent,data));
 
+    }
+    if(findWord(data))
+    {
+        return leaf;
     }
     if(data < leaf->key_value)
     {
@@ -199,26 +204,46 @@ std::vector<std::string> stringToVector(const std::string str)
     return words;
 }
 
-
-
 /**
- * When called requires user input then searches for that value.
- * Then returns a statement wether found or not.
+ * Template specilization for integer values
+ * Then returns a statement whether found or not.
  */
-template <typename T>
-void tree<T>::findWord()
+template <>
+bool tree<int>::findWord(int toFind)
 {
-    std::string toFind; std::cin >> toFind; std::cout << std::endl;
-    node<T>* result = this->search(rootNode,toFind);
+    std::cout << std::endl;
+    node<int>* result = this->search(rootNode,toFind);
     if(result == nullptr)
     {
         std::cout << "This value was not found" << std::endl;
+        return false;
     }
     else {
         std::cout << result->key_value << " was found" << std::endl;
+        return true;
     }
 }
 
+/**
+ * When called requires user input then searches for that value.
+ * Then returns a statement whether found or not.
+ */
+template <>
+bool tree<std::string>::findWord(std::string toFind)
+{
+    std::transform(toFind.begin(), toFind.end(), toFind.begin(), ::tolower);
+    std::cout << std::endl;
+    node<std::string>* result = this->search(rootNode,toFind);
+    if(result == nullptr)
+    {
+        std::cout << "This value was not found" << std::endl;
+        return false;
+    }
+    else {
+        std::cout << result->key_value << " was found" << std::endl;
+        return true;
+    }
+}
 
 /**
  * Takes a file and tree makes all the words lowercase
@@ -292,8 +317,9 @@ std::vector<node<T>*> tree<T>::getNodes(node<T>* pNode,std::vector<node<T>*>& re
  * @param pNode this is the root node where pre-order will start from
  * @returns last node parameter
  */
+
 template <typename T>
-node<T>* tree<T>::pre_order(node<T>* pNode)
+std::string tree<T>::pre_order(node<T>* pNode)
 {
     if(pNode == nullptr)
     {
@@ -334,6 +360,10 @@ void tree<T>::deleteNode(T toDelete){
         if(result->parent->key_value > result->key_value)
         {
             result->parent->left = nullptr;
+            free(result);
+        }
+        else{
+            result->parent->right = nullptr;
             free(result);
         }
     }
