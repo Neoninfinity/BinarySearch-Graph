@@ -1,3 +1,14 @@
+/**
+    210CT Coursework 1
+    testing.cpp
+    Purpose: test the binary tree & graph functions
+    -Test tasks stated on assignment brief
+
+    @author Rahul Prashar
+    @version 1.1 21/11/18
+*/
+
+
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch.hpp"
 #include <iostream>
