@@ -14,6 +14,10 @@
 #include <queue>
 #include <set>
 #include <limits>
+#include "../main/binarySearch.h"
+
+
+
 
 /**
  * graph structure allows multiple instances
