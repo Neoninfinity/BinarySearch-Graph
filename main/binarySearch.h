@@ -385,14 +385,7 @@ void tree<T>::deleteNode(T toDelete){
     else
     {
         node<T>* furthestValue;
-        if(toDelete > rootNode->key_value)
-        {
-            furthestValue= this->in_order_next(rootNode->left);
-        }
-        else
-        {
-            furthestValue = this->in_order_next(rootNode->right);
-        }
+        furthestValue = this->in_order_next(rootNode->right);
         result->key_value = furthestValue->key_value;
         if(furthestValue->parent->key_value > furthestValue->key_value)
         {
