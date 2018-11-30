@@ -27,7 +27,7 @@
 template<class T>
 struct node
 {
-    T key_value;
+    T key_data;
     int weight;
     node *parent;
     node *left;
@@ -48,7 +48,7 @@ node<T>* getNode(node<T>* leaf = nullptr, T data = nullptr)
 {
     auto newNode = new node<T>();
     newNode->weight;
-    newNode->key_value = data;
+    newNode->key_data = data;
     newNode->right = nullptr;
     newNode->left = nullptr;
     newNode->parent = leaf;
@@ -96,7 +96,7 @@ node<T>* tree<T>::insert(node<T>* leaf ,T data,node<T>* parent){
     {
         return leaf;
     }
-    if(data < leaf->key_value)
+    if(data < leaf->key_data)
     {
         if(leaf->left == nullptr)
         {
@@ -138,14 +138,14 @@ node<T>* tree<T>::search(node<T>* root, T value){
         std::cout << "Pointer is null data was not found." << value << std::endl;
         return nullptr;
     }
-    else if(root->key_value > value)
+    else if(root->key_data > value)
     {
-        std::cout << "Data is smaller than node value '" << root -> key_value << "' going left" << std::endl;
+        std::cout << "Data is smaller than node value '" << root -> key_data << "' going left" << std::endl;
         return search(root->left,value);
     }
-    else if(root->key_value < value)
+    else if(root->key_data < value)
     {
-        std::cout << "Data is bigger than node value '" << root -> key_value << "' going right" << std::endl;
+        std::cout << "Data is bigger than node value '" << root -> key_data << "' going right" << std::endl;
         return search(root->right,value);
     }
     else
@@ -217,7 +217,7 @@ bool tree<int>::findWord(int toFind)
         return false;
     }
     else {
-        std::cout << result->key_value << " was found" << std::endl;
+        std::cout << result->key_data << " was found" << std::endl;
         return true;
     }
 }
@@ -238,7 +238,7 @@ bool tree<std::string>::findWord(std::string toFind)
         return false;
     }
     else {
-        std::cout << result->key_value << " was found" << std::endl;
+        std::cout << result->key_data << " was found" << std::endl;
         return true;
     }
 }
@@ -278,7 +278,7 @@ std::vector<int> tree<T>::getValues(node<T>* pNode,std::vector<int>& retVec)
         getValues(pNode->left,retVec);
     }
 
-    retVec.emplace_back(pNode->key_value);
+    retVec.emplace_back(pNode->key_data);
     if(pNode->right != nullptr)
     {
         getValues(pNode->right,retVec);
@@ -328,7 +328,7 @@ std::vector<T> tree<T>::pre_order(node<T>* pNode, std::vector<T> retVec)
         retVec.empty();
     }
 
-    retVec.push_back(pNode->key_value);
+    retVec.push_back(pNode->key_data);
     retVec = pre_order(pNode->left,retVec);
     retVec = pre_order(pNode->right,retVec);
     return retVec;
@@ -363,7 +363,7 @@ void tree<T>::deleteNode(T toDelete){
 
     if(result->left == nullptr && result->right == nullptr)
     {
-        if(result->parent->key_value > result->key_value)
+        if(result->parent->key_data > result->key_data)
         {
             result->parent->left = nullptr;
             free(result);
@@ -377,13 +377,13 @@ void tree<T>::deleteNode(T toDelete){
     {
         if(result->left != nullptr)
         {
-            result->key_value = result->left->key_value;
+            result->key_data = result->left->key_data;
             result->left = nullptr;
             free(result->left);
         }
         else
         {
-            result->key_value = result->right->key_value;
+            result->key_data = result->right->key_data;
             result->right = nullptr;
             free(result->right);
         }
@@ -392,8 +392,8 @@ void tree<T>::deleteNode(T toDelete){
     {
         node<T>* furthestValue;
         furthestValue = this->in_order_next(rootNode->right);
-        result->key_value = furthestValue->key_value;
-        if(furthestValue->parent->key_value > furthestValue->key_value)
+        result->key_data = furthestValue->key_data;
+        if(furthestValue->parent->key_data > furthestValue->key_data)
         {
             furthestValue->parent->left = nullptr;
         }

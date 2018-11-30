@@ -14,7 +14,7 @@
 #include <queue>
 #include <set>
 #include <limits>
- #include "../main/binarySearch.h"
+#include "../main/binarySearch.h"
 
 
 
@@ -409,9 +409,9 @@ std::vector<int> graph::dijkstra(int source)
         {
             //from root to adjacent
             int newDistance = dist[minV] + adjacent[v]->weight;
-            if(newDistance < dist[adjacent[v]->key_value])
+            if(newDistance < dist[adjacent[v]->key_data])
             {
-                dist[adjacent[v]->key_value] = newDistance;
+                dist[adjacent[v]->key_data] = newDistance;
             }
         }
     }

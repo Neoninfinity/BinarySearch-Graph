@@ -24,11 +24,11 @@ TEST_CASE( "Words can be manipulated correctly", "[treeString]" ) {
     tree1->insertText("testFile.txt");
 
     SECTION("Words are inserted correctly") {
-        REQUIRE(tree1->rootNode->key_value == "banana");
-        REQUIRE(tree1->rootNode->left->key_value == "air");
-        REQUIRE(tree1->rootNode->left->right->key_value == "apple");
-        REQUIRE(tree1->rootNode->right->key_value == "cover");
-        REQUIRE(tree1->rootNode->right->left->key_value == "catch");
+        REQUIRE(tree1->rootNode->key_data == "banana");
+        REQUIRE(tree1->rootNode->left->key_data == "air");
+        REQUIRE(tree1->rootNode->left->right->key_data == "apple");
+        REQUIRE(tree1->rootNode->right->key_data == "cover");
+        REQUIRE(tree1->rootNode->right->left->key_data == "catch");
     }
 
     SECTION("Words are searched correctly") {
@@ -53,13 +53,13 @@ TEST_CASE( "Words can be manipulated correctly", "[treeString]" ) {
         //Test if node with one child can be deleted
         tree1->deleteNode("Cover");
         REQUIRE(!tree1->findWord("cover"));
-        REQUIRE(tree1->rootNode->right->key_value == "catch");
+        REQUIRE(tree1->rootNode->right->key_data == "catch");
 
         //Test if node with two children can be deleted
         tree1->deleteNode(("Banana"));
         REQUIRE(!tree1->findWord(("banana")));
-        std::cout<< tree1->rootNode->key_value;
-        REQUIRE(tree1->rootNode->key_value == "catch");
+        std::cout<< tree1->rootNode->key_data;
+        REQUIRE(tree1->rootNode->key_data == "catch");
     }
 
     SECTION("Duplicate words are not inserted")
@@ -72,8 +72,10 @@ TEST_CASE( "Words can be manipulated correctly", "[treeString]" ) {
 
     SECTION("Check if Pre-Order Outputs correctly")
     {
-        //std::vector<std::string> testVec;
-        //tree1->pre_order(tree1->rootNode);
-
+        auto tree1 = new tree<std::string>;
+        tree1->insertText("testFile.txt");
+        std::vector<std::string> preOrderVec = tree1->pre_order(tree1->rootNode);
+        std::vector<std::string> correct = {"banana","air","apple","cover","catch"};
+        REQUIRE(preOrderVec == correct);
     }
 }
