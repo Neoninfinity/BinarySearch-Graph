@@ -27,7 +27,7 @@
 template<class T>
 struct node
 {
-    T key_value;
+    T key_data;
     int weight;
     node *parent;
     node *left;
@@ -48,7 +48,7 @@ node<T>* getNode(node<T>* leaf = nullptr, T data = nullptr)
 {
     auto newNode = new node<T>();
     newNode->weight;
-    newNode->key_value = data;
+    newNode->key_data = data;
     newNode->right = nullptr;
     newNode->left = nullptr;
     newNode->parent = leaf;
@@ -69,15 +69,13 @@ public:
     bool findWord(int toFind);
     bool findWord(std::string toFind);
     void deleteNode(T toDelete);
-    std::string pre_order(node<T>* pNode);
+    void insertText(std::string fileToInsert);
+    std::vector<T> pre_order(node<T>* pNode,std::vector<T> Vec = {});
     node<T>* in_order_next(node<T>* iNode);
     node<T>* insert(node<T>* rootNode,T data,node<T>* parent = nullptr);
     node<T>* search(node<T>* rootNode,T data);
     std::vector<int> getValues(node<T>* pNode,std::vector<int>& retVec);
     std::vector<node<T>*> getNodes(node<T>* pNode,std::vector<node<T>*>& retVec);
-
-
-
 };
 
 /**
@@ -98,7 +96,7 @@ node<T>* tree<T>::insert(node<T>* leaf ,T data,node<T>* parent){
     {
         return leaf;
     }
-    if(data < leaf->key_value)
+    if(data < leaf->key_data)
     {
         if(leaf->left == nullptr)
         {
@@ -140,14 +138,14 @@ node<T>* tree<T>::search(node<T>* root, T value){
         std::cout << "Pointer is null data was not found." << value << std::endl;
         return nullptr;
     }
-    else if(root->key_value > value)
+    else if(root->key_data > value)
     {
-        std::cout << "Data is smaller than node value '" << root -> key_value << "' going left" << std::endl;
+        std::cout << "Data is smaller than node value '" << root -> key_data << "' going left" << std::endl;
         return search(root->left,value);
     }
-    else if(root->key_value < value)
+    else if(root->key_data < value)
     {
-        std::cout << "Data is bigger than node value '" << root -> key_value << "' going right" << std::endl;
+        std::cout << "Data is bigger than node value '" << root -> key_data << "' going right" << std::endl;
         return search(root->right,value);
     }
     else
@@ -219,7 +217,7 @@ bool tree<int>::findWord(int toFind)
         return false;
     }
     else {
-        std::cout << result->key_value << " was found" << std::endl;
+        std::cout << result->key_data << " was found" << std::endl;
         return true;
     }
 }
@@ -240,7 +238,7 @@ bool tree<std::string>::findWord(std::string toFind)
         return false;
     }
     else {
-        std::cout << result->key_value << " was found" << std::endl;
+        std::cout << result->key_data << " was found" << std::endl;
         return true;
     }
 }
@@ -251,15 +249,15 @@ bool tree<std::string>::findWord(std::string toFind)
  * @param selectedTree this is the tree to insert into
  * @param fileToInsert this is the file to insert
  */
-template <typename T>
-void insertText(tree<T>* selectedTree,std::string fileToInsert)
+template <>
+void tree<std::string>::insertText(std::string fileToInsert)
 {
     std::string documentText = readfile(fileToInsert);
     transform(documentText.begin(), documentText.end(), documentText.begin(), tolower); //Applies operation sequentially to make the text lowercase.
     std::vector<std::string> textVec = stringToVector(documentText);
     for(int i = 0;i < textVec.size();i++)
     {
-        *selectedTree->insert(selectedTree->rootNode,textVec[i]);
+        this->insert(this->rootNode,textVec[i]);
     }
 
 }
@@ -280,7 +278,7 @@ std::vector<int> tree<T>::getValues(node<T>* pNode,std::vector<int>& retVec)
         getValues(pNode->left,retVec);
     }
 
-    retVec.emplace_back(pNode->key_value);
+    retVec.emplace_back(pNode->key_data);
     if(pNode->right != nullptr)
     {
         getValues(pNode->right,retVec);
@@ -319,15 +317,23 @@ std::vector<node<T>*> tree<T>::getNodes(node<T>* pNode,std::vector<node<T>*>& re
  */
 
 template <typename T>
-std::string tree<T>::pre_order(node<T>* pNode)
+std::vector<T> tree<T>::pre_order(node<T>* pNode, std::vector<T> retVec)
 {
     if(pNode == nullptr)
     {
-        return pNode;
+        return retVec;
     }
-    std::cout << pNode->key_value << " ";
-    pre_order(pNode->left);
-    pre_order(pNode->right);
+    if(pNode == rootNode)
+    {
+        retVec.empty();
+    }
+
+    retVec.push_back(pNode->key_data);
+    retVec = pre_order(pNode->left,retVec);
+    retVec = pre_order(pNode->right,retVec);
+    return retVec;
+
+
 }
 
 /**
@@ -357,7 +363,7 @@ void tree<T>::deleteNode(T toDelete){
 
     if(result->left == nullptr && result->right == nullptr)
     {
-        if(result->parent->key_value > result->key_value)
+        if(result->parent->key_data > result->key_data)
         {
             result->parent->left = nullptr;
             free(result);
@@ -371,13 +377,13 @@ void tree<T>::deleteNode(T toDelete){
     {
         if(result->left != nullptr)
         {
-            result->key_value = result->left->key_value;
+            result->key_data = result->left->key_data;
             result->left = nullptr;
             free(result->left);
         }
         else
         {
-            result->key_value = result->right->key_value;
+            result->key_data = result->right->key_data;
             result->right = nullptr;
             free(result->right);
         }
@@ -385,16 +391,9 @@ void tree<T>::deleteNode(T toDelete){
     else
     {
         node<T>* furthestValue;
-        if(toDelete > rootNode->key_value)
-        {
-            furthestValue= this->in_order_next(rootNode->left);
-        }
-        else
-        {
-            furthestValue = this->in_order_next(rootNode->right);
-        }
-        result->key_value = furthestValue->key_value;
-        if(furthestValue->parent->key_value > furthestValue->key_value)
+        furthestValue = this->in_order_next(rootNode->right);
+        result->key_data = furthestValue->key_data;
+        if(furthestValue->parent->key_data > furthestValue->key_data)
         {
             furthestValue->parent->left = nullptr;
         }

@@ -17,7 +17,7 @@
 template<class T>
 struct node
 {
-    T key_value;
+    T key_data;
     node *parent;
     node *left;
     node *right;
@@ -28,7 +28,7 @@ template<typename  T>
 node<T>* getNode(node<T>* leaf = nullptr, T data = nullptr)
 {
     auto newNode = new node<T>();
-    newNode->key_value = data;
+    newNode->key_data = data;
     newNode->right = nullptr;
     newNode->left = nullptr;
     newNode->parent = leaf;
@@ -57,7 +57,7 @@ node<T>* tree<T>::insert(node<T>* leaf ,T data,node<T>* parent){
         return(this->rootNode = getNode(parent,data));
 
     }
-    if(data < leaf->key_value)
+    if(data < leaf->key_data)
     {
         if(leaf->left == nullptr)
         {
@@ -92,14 +92,14 @@ node<T>* tree<T>::search(node<T>* root, T value){
         std::cout << "Pointer is null data was not found." << value << std::endl;
         return nullptr;
     }
-    else if(root->key_value > value)
+    else if(root->key_data > value)
     {
-        std::cout << "Data is smaller than node value '" << root -> key_value << "' going left" << std::endl;
+        std::cout << "Data is smaller than node value '" << root -> key_data << "' going left" << std::endl;
         return search(root->left,value);
     }
-    else if(root->key_value < value)
+    else if(root->key_data < value)
     {
-        std::cout << "Data is bigger than node value '" << root -> key_value << "' going right" << std::endl;
+        std::cout << "Data is bigger than node value '" << root -> key_data << "' going right" << std::endl;
         return search(root->right,value);
     }
     else
@@ -154,7 +154,7 @@ void tree<T>::findWord()
         std::cout << "This value was not found" << std::endl;
     }
     else {
-        std::cout << result->key_value << " was found" << std::endl;
+        std::cout << result->key_data << " was found" << std::endl;
     }
 }
 
@@ -179,7 +179,7 @@ std::vector<int> tree<T>::getValues(node<T>* pNode,std::vector<int>& retVec)
         getValues(pNode->left,retVec);
     }
 
-    retVec.emplace_back(pNode->key_value);
+    retVec.emplace_back(pNode->key_data);
     if(pNode->right != nullptr)
     {
         getValues(pNode->right,retVec);
@@ -195,7 +195,7 @@ node<T>* tree<T>::pre_order(node<T>* pNode)
     {
         return pNode;
     }
-    std::cout << pNode->key_value << " ";
+    std::cout << pNode->key_data << " ";
     pre_order(pNode->left);
     pre_order(pNode->right);
 }
@@ -218,7 +218,7 @@ void tree<T>::deleteNode(T toDelete){
 
     if(result->left == nullptr && result->right == nullptr)
     {
-        if(result->parent->key_value > result->key_value)
+        if(result->parent->key_data > result->key_data)
         {
             result->parent->left = nullptr;
             free(result);
@@ -228,13 +228,13 @@ void tree<T>::deleteNode(T toDelete){
     {
         if(result->left != nullptr)
         {
-            result->key_value = result->left->key_value;
+            result->key_data = result->left->key_data;
             result->left = nullptr;
             free(result->left);
         }
         else
         {
-            result->key_value = result->right->key_value;
+            result->key_data = result->right->key_data;
             result->right = nullptr;
             free(result->right);
         }
@@ -242,7 +242,7 @@ void tree<T>::deleteNode(T toDelete){
     else
     {
         node<T>* furthestValue;
-        if(toDelete > rootNode->key_value)
+        if(toDelete > rootNode->key_data)
         {
             furthestValue= this->in_order_next(rootNode->left);
         }
@@ -250,8 +250,8 @@ void tree<T>::deleteNode(T toDelete){
         {
             furthestValue = this->in_order_next(rootNode->right);
         }
-        result->key_value = furthestValue->key_value;
-        if(furthestValue->parent->key_value > furthestValue->key_value)
+        result->key_data = furthestValue->key_data;
+        if(furthestValue->parent->key_data > furthestValue->key_data)
         {
             furthestValue->parent->left = nullptr;
         }
