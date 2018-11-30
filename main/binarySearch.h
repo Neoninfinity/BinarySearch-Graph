@@ -69,15 +69,13 @@ public:
     bool findWord(int toFind);
     bool findWord(std::string toFind);
     void deleteNode(T toDelete);
-    std::string pre_order(node<T>* pNode);
+    void insertText(std::string fileToInsert);
+    std::vector<T> pre_order(node<T>* pNode,std::vector<T> Vec = {});
     node<T>* in_order_next(node<T>* iNode);
     node<T>* insert(node<T>* rootNode,T data,node<T>* parent = nullptr);
     node<T>* search(node<T>* rootNode,T data);
     std::vector<int> getValues(node<T>* pNode,std::vector<int>& retVec);
     std::vector<node<T>*> getNodes(node<T>* pNode,std::vector<node<T>*>& retVec);
-
-
-
 };
 
 /**
@@ -251,15 +249,15 @@ bool tree<std::string>::findWord(std::string toFind)
  * @param selectedTree this is the tree to insert into
  * @param fileToInsert this is the file to insert
  */
-template <typename T>
-void insertText(tree<T>* selectedTree,std::string fileToInsert)
+template <>
+void tree<std::string>::insertText(std::string fileToInsert)
 {
     std::string documentText = readfile(fileToInsert);
     transform(documentText.begin(), documentText.end(), documentText.begin(), tolower); //Applies operation sequentially to make the text lowercase.
     std::vector<std::string> textVec = stringToVector(documentText);
     for(int i = 0;i < textVec.size();i++)
     {
-        *selectedTree->insert(selectedTree->rootNode,textVec[i]);
+        this->insert(this->rootNode,textVec[i]);
     }
 
 }
@@ -319,15 +317,23 @@ std::vector<node<T>*> tree<T>::getNodes(node<T>* pNode,std::vector<node<T>*>& re
  */
 
 template <typename T>
-std::string tree<T>::pre_order(node<T>* pNode)
+std::vector<T> tree<T>::pre_order(node<T>* pNode, std::vector<T> retVec)
 {
     if(pNode == nullptr)
     {
-        return pNode;
+        return retVec;
     }
-    std::cout << pNode->key_value << " ";
-    pre_order(pNode->left);
-    pre_order(pNode->right);
+    if(pNode == rootNode)
+    {
+        retVec.empty();
+    }
+
+    retVec.push_back(pNode->key_value);
+    retVec = pre_order(pNode->left,retVec);
+    retVec = pre_order(pNode->right,retVec);
+    return retVec;
+
+
 }
 
 /**

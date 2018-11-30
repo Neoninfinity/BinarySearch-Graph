@@ -3,22 +3,15 @@
 //
 
 
-#include "../main/graph.h"
+#include "../main/binarySearch.h"
 
 int main()
 {
-    auto graph1 = new graph;
-    graph1->createMultipleNodes(7);
-    graph1->addConnection(0,5,9);
-    graph1->addConnection(1,5,3);
-    graph1->addConnection(1,4,4);
-    graph1->addConnection(0,4,5);
-    graph1->addConnection(0,2,12);
-    graph1->addConnection(2,4,4);
-    graph1->addConnection(4,3,6);
-    graph1->addConnection(3,6,4);
+    auto graph1 = new tree<std::string>;
+    graph1->insertText("testFile.txt");
+    std::vector<std::string> preOrderVec = graph1->pre_order(graph1->rootNode);
+    std::vector<std::string> correct = {"banana","air","apple","cover","catch"};
+    bool value = (preOrderVec == correct);
 
-    graph1->breadthFirst(5,2);
-    graph1->depthFirst(5,2);
-    graph1->isPath(5,2);
+    std::string test = preOrderVec[0];
 }

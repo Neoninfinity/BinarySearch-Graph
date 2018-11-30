@@ -21,7 +21,7 @@
 TEST_CASE( "Words can be manipulated correctly", "[treeString]" ) {
 
     tree<std::string> *tree1 = new tree<std::string>;
-    insertText(tree1, "testFile.txt");
+    tree1->insertText("testFile.txt");
 
     SECTION("Words are inserted correctly") {
         REQUIRE(tree1->rootNode->key_value == "banana");
@@ -68,5 +68,12 @@ TEST_CASE( "Words can be manipulated correctly", "[treeString]" ) {
         node<std::string>* newNode = tree1->search(tree1->rootNode,"apple");
         bool check = (newNode->right == nullptr) && (newNode->left == nullptr);
         REQUIRE(check);
+    }
+
+    SECTION("Check if Pre-Order Outputs correctly")
+    {
+        //std::vector<std::string> testVec;
+        //tree1->pre_order(tree1->rootNode);
+
     }
 }
